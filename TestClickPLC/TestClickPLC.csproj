@@ -25,4 +25,11 @@
       <ProjectReference Include="..\ClickPLC\ClickPLC.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Data\registers.data" />
+      <Content Include="Data\registers.data">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
