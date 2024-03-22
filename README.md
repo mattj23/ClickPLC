@@ -4,6 +4,84 @@ This C# library provides Modbus based connectivity to the low cost *Click* and *
 controllers made by Koyo Electronics and sold in the United States by Automation Direct. Specifically, it allows for the
 reading and writing of data registers on a running PLC.
 
+This library uses the [NModbus](https://github.com/NModbus/NModbus) implementation to communicate with the PLC.
+
+## Current Support
+
+The current state of support for the different memory types is listed in the table below.
+
+| Memory Type                 | Symbol | Supports Read | Supports Write |
+|-----------------------------|--------|---------------|----------------|
+| Input Point                 | `X`    | Yes           |                |
+| Output Point                | `Y`    | Yes           | Yes            |
+| Control Relay               | `C`    | Yes           | Yes            |
+| Timer                       | `T`    | Yes           |                |
+| Counter                     | `CT`   | Yes           |                |
+| System Control Relay        | `SC`   |               |                |
+| Data Register (Single Word) | `DS`   | Yes           | Yes            |
+| Data Register (Double Word) | `DD`   | Yes           | Yes            |
+| Data Register (Hex)         | `DH`   | Yes           | Yes            |
+| Data Register (Float)       | `DF`   | Yes           | Yes            |
+| Input Register              | `XD`   | Yes           |                |
+| Output Register             | `YD`   | Yes           | Yes            |
+| Timer Register              | `TD`   | Yes           | Yes            |
+| Counter Register            | `CTD`  | Yes           | Yes            |
+| System Data Register        | `SD`   |               |                |
+| Text                        | `TXT`  |               |                |
+
+Currently, the *System Control Relay* and *System Data Register* memory types are not supported because some of them are
+read-only and some are not, making them different Modbus types. We will have to decide if the library should check which
+addresses are read-only and which are not, or if we should just allow the user to read and write to all of them and let
+the PLC return errors. It also isn't clear whether all models of Click and Click Plus have the same specific named
+addresses which have write capabilities.
+
+The *Text* memory type is not currently supported but will likely be added in the future.
+
+## Basic Usage
+
+The library is designed to be simple to use. The following example demonstrates how to read and write single data
+register values, both synchronously and asynchronously.
+
+```csharp
+using ClickPLC;
+
+var config = new ClickConfig()
+{
+    Type = "ModbusTCP",
+    Address = "192.168.1.5",
+    Port = 502
+};
+
+var factory = new ClickFactory(config);
+var click = factory.Build();
+
+// Read X001
+bool x001 = click.ReadX(1);
+// - or -
+bool x001a = await click.ReadXAsync(1);
+
+// Read C12
+bool c12 = click.ReadC(12);
+// - or -
+bool c12a = await click.ReadCAsync(12);
+
+// Read DF100
+float df100 = click.ReadDf(100);
+// - or -
+float df100a = await click.ReadDfAsync(100);
+
+// Write Y001
+click.WriteY(1, true);
+// - or -
+await click.WriteYAsync(1, true);
+
+// Write DF201
+click.WriteDf(201, 3.14f);
+// - or -
+await click.WriteDfAsync(201, 3.14f);
+
+```
+
 ## Click PLC Data Types and Addressing
 
 The Click PLC has several different types of memory areas which can be accessed. In the *Click Programming Software*,
