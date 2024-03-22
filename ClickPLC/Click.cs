@@ -11,6 +11,7 @@ public class Click
     {
         _master = master;
     }
+    
 
     public async Task<float> ReadDf(ushort address)
     {

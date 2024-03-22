@@ -16,18 +16,18 @@ Manual*](https://cdn.automationdirect.com/static/manuals/c2userm/ch2.pdf).
 
 The Click PLC data types are summarized at the very beginning of Chapter 2, and map to the following C# types:
 
-| Click PLC Data Type | C# Type | Description                                                |
-|---------------------|---------|------------------------------------------------------------|
-| BIT                 | `bool`  | A single binary digit, representing high/low or true/false |
-| INT                 | `short` | A 16-bit signed integer                                    |             
-| INT2                | `int`   | A 32-bit signed integer                                    |
-| FLOAT               | `float` | A 32-bit floating point number                             |
-| TEXT                | `char`  | A single ASCII character                                   |
-| HEX                 | `short` | A 16-bit unsigned integer in hexadecimal notation          |
+| Click PLC Data Type | C# Type  | Description                                                |
+|---------------------|----------|------------------------------------------------------------|
+| BIT                 | `bool`   | A single binary digit, representing high/low or true/false |
+| INT                 | `short`  | A 16-bit signed integer                                    |             
+| INT2                | `int`    | A 32-bit signed integer                                    |
+| FLOAT               | `float`  | A 32-bit floating point number                             |
+| TEXT                | `char`   | A single ASCII character                                   |
+| HEX                 | `ushort` | A 16-bit unsigned integer in hexadecimal notation          |
 
 The memory types are also summarized at the beginning of Chapter 2, and map to the following regions of memory:
 
-| Memory Type                 | Symbol | Data  | Registers                       |
+| Memory Type                 | Symbol | Data  | Named Addresses                 |
 |-----------------------------|--------|-------|---------------------------------|
 | Input Point                 | `X`    | BIT   | `X#01-X#16` for `#` of `0 to 8` |
 | Output Point                | `Y`    | BIT   | `Y#01-Y#16` for `#` of `0 to 8` |
@@ -63,10 +63,23 @@ The Click PLC Programming Software will refer to memory areas by their symbol an
 are the named addresses used to identify them in ladder logic programs and the *Data View* feature. They are a
 meaningful way to think about the memory areas within the context of the PLC program.
 
-When accessing the memory areas remotely via Modbus, however, we must use integer based addresses (often represented in
-hexadecimal notation). Each Click named address is mapped to a specific Modbus address, and the Modbus address is used
+When accessing the memory areas remotely via Modbus, however, we must use the Modbus addressing scheme. Modbus provides
+for four different types of addresses, each which can be thought of as having its own memory space:
+
+* Input Coils: these are 1-bit read only values
+* Output Coils: these are 1-bit read/write values
+* Input Registers: these are 16-bit read only values
+* Holding Registers: these are 16-bit read/write values
+
+Single bit values only have two possible states, so they map directly to the `bool` type in C#. On the other hand,
+16-bit values come in clusters of one or more, and can end up mapping into many different C# types.
+
+Each Click named address is mapped to a specific Modbus address for its type, and the Modbus address is used
 to read and/or write data. The Modbus addresses can be viewed by using the *Address Picker* feature of the Click
-Programming Software and selecting the *Display MODBUS Address* checkbox.
+Programming Software and selecting the *Display MODBUS Address* checkbox. The Modbus address will be coupled to the
+Modbus function codes available for the register, which will also be visible in the *Address Picker*. The first function
+code listed will indicate which type of register the address is associated with. Output coils can be identified by the
+function code `01`, input coils by `02`, holding registers by `03`, and input registers by `04`.
 
 This library provides a way to map between the named addresses and the Modbus addresses so that client software does not
 need to be concerned with the details of the Modbus mapping. The following sections go into more detail on the mappings
