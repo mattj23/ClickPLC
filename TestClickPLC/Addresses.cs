@@ -3,6 +3,16 @@ using TestClickPLC.Data;
 
 namespace TestClickPLC;
 
+/// <summary>
+/// Address tests are based on the registers.data file, which was built by opening the "Address Picker" in a live,
+/// running Click Plus PLC and exporting all addresses to a CSV.  I used a python script to read the CSV and extract
+/// symbols, numbers, data types, modbus addresses, and modbus function codes.  The data file contains over 13k rows:
+/// one for each memory address in the PLC.
+///
+/// These tests will go through all 13k addresses and individually verify that they are mapped correctly. The
+/// AddressBook class does the mapping using a simpler set of rules than maintaining a large dictionary of addresses,
+/// and these tests exist to verify that the rules are correct.
+/// </summary>
 public class Addresses
 {
     private record Fixture(Register[] Registers, AddressBook AddressBook);

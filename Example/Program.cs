@@ -13,7 +13,7 @@ var config = new ClickConfig()
 var factory = new ClickFactory(config);
 var click = factory.Build();
 
-var value = await click.ReadDf(0x7012);
-Console.WriteLine(value);
+// var value = await click.ReadDf(0x7012);
+// Console.WriteLine(value);
 
 
